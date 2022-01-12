@@ -1,10 +1,11 @@
-const express = require("express");
+import express from 'express';
 const app = express();
 
-const { type } = require("./config");
-const { andromedaAuthorization } = require("./authorization");
-const { getStartTime } = require("./functions/getStartTime");
-const { getXlxs, sendErrorReport } = require("./functions/errorReporting");
+import { type } from './config.js';
+import { andromedaAuthorization } from './authorization.js';
+import { getStartTime, submitStartTime } from './functions/runTimes.js';
+import { sendErrorReport } from './functions/errorReporting.js';
+
 
 const server = app.listen(6000, async () => {
   console.log("App is listening...");
@@ -12,16 +13,20 @@ const server = app.listen(6000, async () => {
 
   if (authorizationResult.indexOf("Error") === -1) {
     console.log("Authorization complete");
-    const lastRunTime = await getStartTime(type);
+    const { lastRunTime, nextRunTime } = await getStartTime(type);
 
-    let allErrors = [];
+    let allErrors = [{
+      err: 'Test',
+      lastId: 1
+    }];
 
     allErrors = allErrors.flat();
 
     if (allErrors.length) {
-      getXlxs(allErrors);
-      await sendErrorReport(type);
-    }
+      await sendErrorReport(allErrors, type)
+    } 
+
+    await submitStartTime(type, nextRunTime)
   }
 
   process.kill(process.pid, "SIGTERM");

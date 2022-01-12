@@ -1,4 +1,4 @@
-const { getLastRunTime, submitQuery } = require('../sql');
+import { getLastRunTime, submitQuery } from '../sql.js';
 
 const getStartTime = async (type) => {
 	const data = await getLastRunTime(type);
@@ -9,7 +9,7 @@ const getStartTime = async (type) => {
 		return this;
 	};
 
-	const date = new Date().addHours(4);
+	const date = new Date().addHours(5);
 	let year = date.getFullYear();
 	let month = ('0' + (date.getMonth() + 1)).slice(-2);
 	let day = ('0' + date.getDate()).slice(-2);
@@ -19,17 +19,17 @@ const getStartTime = async (type) => {
 	let milliseconds = ('00' + date.getMilliseconds()).slice(-3);
 	const currentTime = `${year}-${month}-${day}T${hour}:${min}:${seconds}.${milliseconds}`;
 
+	return {
+		lastRunTime: lastRunTime,
+		nextRunTime: currentTime,
+	};
+};
+
+const submitStartTime = async (type, currentTime) => {
 	const res = await submitQuery(
 		`INSERT INTO AndromedaSchedule VALUES('${type}', '${currentTime}')`
 	);
-
-	if (res !== 'Complete') {
-		await sendEmail(currentTime);
-	}
-
-	return lastRunTime;
+	return res;
 };
 
-module.exports = {
-	getStartTime,
-};
+export { getStartTime, submitStartTime };

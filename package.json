@@ -3,6 +3,7 @@
 	"version": "1.0.0",
 	"description": "",
 	"main": "index.js",
+	"type": "module",
 	"scripts": {
 		"start": "nodemon index.js"
 	},
@@ -13,7 +14,7 @@
 		"crypto-js": "^4.1.1",
 		"excel4node": "^1.7.2",
 		"express": "^4.17.1",
-		"msnodesqlv8": "^2.2.0",
+		"msnodesqlv8": "^2.4.4",
 		"nodemailer": "^6.6.3",
 		"nodemon": "^2.0.12"
 	}

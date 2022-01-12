@@ -1,5 +1,5 @@
-const sql = require("msnodesqlv8");
-const { server, database, driver } = require("./config");
+import sql from 'msnodesqlv8';
+import { server, database, driver } from './config.js';
 
 const connectionString = `server=${server};Database=${database};Trusted_Connection=Yes;Driver=${driver}`;
 
@@ -70,7 +70,7 @@ const submitAllQueries = async (fn, data, table, fields) => {
   return errors;
 };
 
-module.exports = {
+export {
   getLastRunTime,
   getSQLServerData,
   submitQuery,
