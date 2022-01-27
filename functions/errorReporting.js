@@ -1,7 +1,7 @@
-import { email, emailPass } from '../config.js';
-import nodemailer from 'nodemailer';
-import xl from 'excel4node';
-import fs from 'fs';
+const { email, emailPass } = require('../config');
+const nodemailer = require('nodemailer');
+const xl = require('excel4node');
+const fs = require('fs');
 
 const getXlxs = (arr) => {
 	//Create a new Excel sheet
@@ -61,4 +61,4 @@ const sendErrorReport = async (arr, type) => {
 	fs.unlinkSync('./AndromedaErrorReport.xlsx');
 };
 
-export { sendErrorReport };
+module.exports = { sendErrorReport };

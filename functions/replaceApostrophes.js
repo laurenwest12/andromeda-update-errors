@@ -6,6 +6,6 @@ const replaceApostrophes = (obj) => {
 	});
 };
 
-export {
+module.exports = {
 	replaceApostrophes,
 };

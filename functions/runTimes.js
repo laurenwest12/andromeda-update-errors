@@ -1,4 +1,4 @@
-import { getLastRunTime, submitQuery } from '../sql.js';
+const { getLastRunTime, submitQuery } = require('../sql.js');
 
 const getStartTime = async (type) => {
 	const data = await getLastRunTime(type);
@@ -32,4 +32,4 @@ const submitStartTime = async (type, currentTime) => {
 	return res;
 };
 
-export { getStartTime, submitStartTime };
+module.exports = { getStartTime, submitStartTime };

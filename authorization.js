@@ -1,6 +1,6 @@
-import axios from 'axios';
-import CryptoJS from 'crypto-js';
-import { url, user, applicationKey } from './config.js';
+const axios = require('axios');
+const CryptoJS = require('crypto-js');
+const { url, user, applicationKey } = require('./config.js');
 
 const guid = () => {
 	function s4() {
@@ -70,4 +70,4 @@ const andromedaAuthorization = async () => {
 	return 'Complete';
 };
 
-export { andromedaAuthorization };
+module.exports = { andromedaAuthorization };

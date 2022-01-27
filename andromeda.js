@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { url } from './config.js';
+const axios = require('axios');
+const { url } = require('./config.js');
 
 const getAndromedaData = async (query, start) => {
 	try {
@@ -19,6 +19,6 @@ const getAndromedaData = async (query, start) => {
 	}
 };
 
-export {
+module.exports = {
 	getAndromedaData,
 };
