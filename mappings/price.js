@@ -4,18 +4,22 @@ const mapStylesToSQLFormat = (data) => {
       id_developmentstyle,
       season,
       style,
-      transactiontotalcost,
+      cost,
       price,
       msrp,
-    } = current;
+      modifiedby,
+      modifiedon,
+    } = current.Entity;
 
     acc.push(`(
     '${id_developmentstyle}',
     '${season}',
     '${style}',
-    '${transactiontotalcost}',
+    '${cost}',
     '${price}',
-    '${msrp}'
+    '${msrp}',
+    '${modifiedby}',
+    CAST(LEFT('${modifiedon}',19) as datetime)
   )`);
     return acc;
   }, []);

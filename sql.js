@@ -48,11 +48,11 @@ const submitQuery = async (query) => {
   return 'Complete';
 };
 
-const submitAllQueries = async (fn, data, table) => {
+const submitAllQueries = async (data, table) => {
   const errors = [];
   for (let i = 0; i < data.length; ++i) {
-    const values = await fn(data[i]);
-    const query = insertStatement(table, values);
+    const query = insertStatement(table, data);
+    console.log(query);
     const res = await submitQuery(query);
     if (res.indexOf('Error') !== -1) {
       errors.push({ query, err: res, type: table });

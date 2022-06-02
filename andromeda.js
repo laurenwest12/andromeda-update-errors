@@ -4,7 +4,7 @@ const { mapStylesToSQLFormat } = require('./mappings/price');
 
 const getDevelopmentStyles = async () => {
   const { data } = await axios.get(`${url}/bo/DevelopmentStyle/18236`);
-  return data;
+  return [data];
 };
 
 module.exports = {
