@@ -1,17 +1,16 @@
 const mapStylesToSQLFormat = (data) => {
-  return data.reduce((acc, current) => {
-    const {
-      id_developmentstyle,
-      season,
-      style,
-      cost,
-      price,
-      msrp,
-      modifiedby,
-      modifiedon,
-    } = current.Entity;
+  const {
+    id_developmentstyle,
+    season,
+    style,
+    cost,
+    price,
+    msrp,
+    modifiedby,
+    modifiedon,
+  } = data;
 
-    acc.push(`(
+  return `(
     '${id_developmentstyle}',
     '${season}',
     '${style}',
@@ -20,9 +19,7 @@ const mapStylesToSQLFormat = (data) => {
     '${msrp}',
     '${modifiedby}',
     CAST(LEFT('${modifiedon}',19) as datetime)
-  )`);
-    return acc;
-  }, []);
+  )`;
 };
 
 module.exports = {

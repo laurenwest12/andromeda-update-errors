@@ -16,10 +16,13 @@ const server = app.listen(6000, async () => {
   try {
     await andromedaAuthorization();
     await connectDb();
-    const andromedaData = await getDevelopmentStyles();
-    const sqlFormat = await mapStylesToSQLFormat(andromedaData);
-    const insertErrors = await submitAllQueries(sqlFormat, 'StylePriceImport');
-    console.log(insertErrors);
+    const data = await getDevelopmentStyles();
+    const insertErrors = await submitAllQueries(
+      mapStylesToSQLFormat,
+      data,
+      'StylePriceImport'
+    );
+    insertErrors.length && errors.push(insertErrors);
   } catch (err) {
     errors.push({
       type,

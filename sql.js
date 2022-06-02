@@ -44,15 +44,19 @@ const executeProcedure = async (proc) => {
 };
 
 const submitQuery = async (query) => {
-  await pool.query(query);
-  return 'Complete';
+  try {
+    await pool.query(query);
+    return 'Complete';
+  } catch (err) {
+    return `Error: ${err.message}`;
+  }
 };
 
-const submitAllQueries = async (data, table) => {
+const submitAllQueries = async (fn, data, table) => {
   const errors = [];
   for (let i = 0; i < data.length; ++i) {
-    const query = insertStatement(table, data);
-    console.log(query);
+    const values = await fn(data[i]);
+    const query = insertStatement(table, values);
     const res = await submitQuery(query);
     if (res.indexOf('Error') !== -1) {
       errors.push({ query, err: res, type: table });

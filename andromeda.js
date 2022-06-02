@@ -1,10 +1,9 @@
 const axios = require('axios');
 const { url } = require('./config.js');
-const { mapStylesToSQLFormat } = require('./mappings/price');
 
 const getDevelopmentStyles = async () => {
-  const { data } = await axios.get(`${url}/bo/DevelopmentStyle/18236`);
-  return [data];
+  const res = await axios.get(`${url}/bo/DevelopmentStyle`);
+  return res.data;
 };
 
 module.exports = {
