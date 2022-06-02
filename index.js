@@ -6,13 +6,16 @@ const { andromedaAuthorization } = require('./authorization.js');
 const { getStartTime, submitStartTime } = require('./functions/runTimes.js');
 const { sendErrorReport } = require('./functions/errorReporting.js');
 const { connectDb } = require('./sql');
+const { getDevelopmentStyles } = require('./andromeda.js');
 
 const server = app.listen(6000, async () => {
   console.log('App is listening...');
   const errors = [];
+
   try {
     await andromedaAuthorization();
     await connectDb();
+    await getDevelopmentStyles();
   } catch (err) {
     errors.push({
       type,
