@@ -10,8 +10,22 @@ const {
   getSQLServerDataByQuery,
   submitAllQueries,
 } = require('./sql');
-const { getDevelopmentStyleIds } = require('./andromeda.js');
+const {
+  getDevelopmentStyleIds,
+  getDevelopmentStylesById,
+} = require('./andromeda.js');
 const { mapStylesToSQLFormat } = require('./mappings/price.js');
+
+const submitStylePrices = async (data) => {
+  const errors = [];
+  const insertErrors = await submitAllQueries(
+    mapStylesToSQLFormat,
+    data,
+    'StylePriceImport'
+  );
+  insertErrors.length && errors.push(insertErrors);
+  return errors.flat();
+};
 
 const getIdsNotSubmitted = async () => {
   const andromedaIds = await getDevelopmentStyleIds();
@@ -19,25 +33,23 @@ const getIdsNotSubmitted = async () => {
     `SELECT DISTINCT idStyle FROM StylePriceImport`
   );
   const submittedIds = submittedIdsObjArr.map(({ idStyle }) => idStyle);
-  return andromedaIds.filter((id) => !submittedIds.includes(id));
+  const notSubmittedIds = andromedaIds.filter(
+    (id) => !submittedIds.includes(id)
+  );
+  const styles = await getDevelopmentStylesById(notSubmittedIds);
+  return styles;
 };
 
 const server = app.listen(6000, async () => {
   console.log('App is listening...');
-  const errors = [];
+  let errors = [];
 
   try {
     await andromedaAuthorization();
     await connectDb();
-    const notSubmittedIds = await getIdsNotSubmitted();
-    console.log(notSubmittedIds);
-
-    // const insertErrors = await submitAllQueries(
-    //   mapStylesToSQLFormat,
-    //   data,
-    //   'StylePriceImport'
-    // );
-    // insertErrors.length && errors.push(insertErrors);
+    const notSubmittedStyles = await getIdsNotSubmitted();
+    const submitErrors = await submitStylePrices(notSubmittedStyles);
+    errors.push(submitErrors);
   } catch (err) {
     errors.push({
       type,
@@ -46,6 +58,7 @@ const server = app.listen(6000, async () => {
   }
 
   if (errors.flat().length) {
+    errors = errors.flat();
     await sendErrorReport(errors.flat(), type);
   }
 
