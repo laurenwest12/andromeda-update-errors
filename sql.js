@@ -15,11 +15,12 @@ const connectDb = async () => {
   return 'Complete';
 };
 
-const getLastRunTime = async (program) => {
+const getLastRunTime = async (table) => {
   const res = await pool.query(
-    `SELECT TOP 1 * FROM AndromedaSchedule WHERE Program = '${program}' ORDER BY LastRunTime DESC`
+    `SELECT TOP 1 ModifiedOn FROM ${table} ORDER BY ModifiedOn DESC`
   );
-  return res?.recordset;
+  console.log(res.recordset);
+  //return res?.recordset;
 };
 
 const getSQLServerData = async (table, where) => {
