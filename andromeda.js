@@ -6,6 +6,13 @@ const getDevelopmentStyles = async () => {
   return res.data;
 };
 
+const getDevelopmentStyleIds = async () => {
+  const res = await axios.get(`${url}/bo/DevelopmentStyle`);
+  return res.data
+    .slice(0, 15)
+    .map(({ id_developmentstyle }) => id_developmentstyle);
+};
+
 module.exports = {
-  getDevelopmentStyles,
+  getDevelopmentStyleIds,
 };

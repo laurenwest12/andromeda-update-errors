@@ -28,6 +28,11 @@ const getSQLServerData = async (table, where) => {
   return res?.recordset;
 };
 
+const getSQLServerDataByQuery = async (query) => {
+  const res = await pool.query(query);
+  return res?.recordset;
+};
+
 const insertTableStatement = (table, fields, values) => {
   return `SELECT *
     INTO ${table}
@@ -69,6 +74,7 @@ module.exports = {
   connectDb,
   getLastRunTime,
   getSQLServerData,
+  getSQLServerDataByQuery,
   executeProcedure,
   submitQuery,
   submitAllQueries,
