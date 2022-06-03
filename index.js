@@ -11,6 +11,7 @@ const {
   submitAllQueries,
   executeProcedure,
   submitQuery,
+  getLastRunTime,
 } = require('./sql');
 const {
   getDevelopmentStyleIds,
@@ -49,12 +50,13 @@ const server = app.listen(6000, async () => {
   try {
     await andromedaAuthorization();
     await connectDb();
-    await submitQuery('TRUNCATE TABLE StylePriceImport');
+    const lastRunTime = await getLastRunTime('StylePriceImportArchive');
+    // await submitQuery('TRUNCATE TABLE StylePriceImport');
 
-    const notSubmittedStyles = await getIdsNotSubmitted();
-    const submitErrors = await submitStylePrices(notSubmittedStyles);
-    errors.push(submitErrors);
-    await executeProcedure('StylePriceImportfromAndromeda');
+    // const notSubmittedStyles = await getIdsNotSubmitted();
+    // const submitErrors = await submitStylePrices(notSubmittedStyles);
+    // errors.push(submitErrors);
+    // await executeProcedure('StylePriceImportfromAndromeda');
   } catch (err) {
     errors.push({
       type,

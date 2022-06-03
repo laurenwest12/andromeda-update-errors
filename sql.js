@@ -19,8 +19,7 @@ const getLastRunTime = async (table) => {
   const res = await pool.query(
     `SELECT TOP 1 ModifiedOn FROM ${table} ORDER BY ModifiedOn DESC`
   );
-  console.log(res.recordset);
-  //return res?.recordset;
+  return res?.recordset[0].ModifiedOn;
 };
 
 const getSQLServerData = async (table, where) => {
