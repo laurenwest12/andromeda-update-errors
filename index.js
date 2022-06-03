@@ -12,7 +12,7 @@ const {
   getLastRunTime,
   getSQLServerData,
 } = require('./sql');
-const { getAndromedaDataByQuery } = require('./andromeda.js');
+const { getAndromedaDataByQuery, updateAndromeda } = require('./andromeda.js');
 const { mapStylesToSQLFormat } = require('./mappings/price.js');
 
 const insertStylePrices = async (data) => {
@@ -42,7 +42,8 @@ const getAndInsertStylePrices = async () => {
 const findMismatchingPrices = async () => {
   await executeProcedure('PopulateStylePriceCorrections');
   const data = await getSQLServerData('StylePriceCorrections');
-  console.log(data);
+  const errors = await updateAndromeda(data);
+  return errors;
 };
 
 const server = app.listen(6000, async () => {
@@ -53,8 +54,10 @@ const server = app.listen(6000, async () => {
     await andromedaAuthorization();
     await connectDb();
     const submitErrors = await getAndInsertStylePrices();
-    console.log(submitErrors);
-    await findMismatchingPrices();
+    errors.push(submitErrors);
+
+    const updateErrors = await findMismatchingPrices();
+    errors.push(updateErrors);
   } catch (err) {
     errors.push({
       type,

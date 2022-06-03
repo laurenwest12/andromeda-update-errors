@@ -11,6 +11,9 @@ const getXlxs = (arr) => {
   //Add headers
   ws.cell(1, 1).string('Error');
   ws.cell(1, 2).string('Query');
+  ws.cell(1, 3).string('ID');
+  ws.cell(1, 4).string('Season');
+  ws.cell(1, 5).string('Style');
 
   //Loop through the error array to add to the worksheet
   for (let i = 0; i < arr.length; ++i) {
@@ -23,6 +26,18 @@ const getXlxs = (arr) => {
 
     if (error.query) {
       ws.cell(row, 2).string(error.query.toString());
+    }
+
+    if (error.idStyle) {
+      ws.cell(row, 3).string(error.idStyle.toString());
+    }
+
+    if (error.Season) {
+      ws.cell(row, 4).string(error.Season.toString());
+    }
+
+    if (error.Style) {
+      ws.cell(row, 5).string(error.Style.toString());
     }
   }
 
