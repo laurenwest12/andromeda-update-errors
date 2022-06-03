@@ -3,20 +3,15 @@ const app = express();
 
 const { type } = require('./config.js');
 const { andromedaAuthorization } = require('./authorization.js');
-const { getStartTime, submitStartTime } = require('./functions/runTimes.js');
 const { sendErrorReport } = require('./functions/errorReporting.js');
 const {
   connectDb,
-  getSQLServerDataByQuery,
   submitAllQueries,
   executeProcedure,
   submitQuery,
   getLastRunTime,
 } = require('./sql');
-const {
-  getDevelopmentStyleIds,
-  getDevelopmentStylesById,
-} = require('./andromeda.js');
+const { getAndromedaDataByQuery } = require('./andromeda.js');
 const { mapStylesToSQLFormat } = require('./mappings/price.js');
 
 const submitStylePrices = async (data) => {
@@ -30,19 +25,6 @@ const submitStylePrices = async (data) => {
   return errors.flat();
 };
 
-const getIdsNotSubmitted = async () => {
-  const andromedaIds = await getDevelopmentStyleIds();
-  const submittedIdsObjArr = await getSQLServerDataByQuery(
-    `SELECT DISTINCT idStyle FROM StylePriceImport`
-  );
-  const submittedIds = submittedIdsObjArr.map(({ idStyle }) => idStyle);
-  const notSubmittedIds = andromedaIds.filter(
-    (id) => !submittedIds.includes(id)
-  );
-  const styles = await getDevelopmentStylesById(notSubmittedIds);
-  return styles;
-};
-
 const server = app.listen(6000, async () => {
   console.log('App is listening...');
   let errors = [];
@@ -51,12 +33,15 @@ const server = app.listen(6000, async () => {
     await andromedaAuthorization();
     await connectDb();
     const lastRunTime = await getLastRunTime('StylePriceImportArchive');
-    // await submitQuery('TRUNCATE TABLE StylePriceImport');
+    const data = await getAndromedaDataByQuery(
+      'ECHO-StyleCostUpdates',
+      '2022-06-02 18:04:20.000'
+    );
 
-    // const notSubmittedStyles = await getIdsNotSubmitted();
-    // const submitErrors = await submitStylePrices(notSubmittedStyles);
-    // errors.push(submitErrors);
-    // await executeProcedure('StylePriceImportfromAndromeda');
+    await submitQuery('TRUNCATE TABLE StylePriceImport');
+    const submitErrors = await submitStylePrices(data);
+    errors.push(submitErrors);
+    await executeProcedure('StylePriceImportfromAndromeda');
   } catch (err) {
     errors.push({
       type,
