@@ -10,11 +10,12 @@ const {
   executeProcedure,
   submitQuery,
   getLastRunTime,
+  getSQLServerData,
 } = require('./sql');
 const { getAndromedaDataByQuery } = require('./andromeda.js');
 const { mapStylesToSQLFormat } = require('./mappings/price.js');
 
-const submitStylePrices = async (data) => {
+const insertStylePrices = async (data) => {
   const errors = [];
   const insertErrors = await submitAllQueries(
     mapStylesToSQLFormat,
@@ -25,6 +26,25 @@ const submitStylePrices = async (data) => {
   return errors.flat();
 };
 
+const getAndInsertStylePrices = async () => {
+  const lastRunTime = await getLastRunTime('StylePriceImportArchive');
+  const data = await getAndromedaDataByQuery(
+    'ECHO-StyleCostUpdates',
+    lastRunTime
+  );
+
+  await submitQuery('TRUNCATE TABLE StylePriceImport');
+  const submitErrors = await insertStylePrices(data);
+  await executeProcedure('StylePriceImportfromAndromeda');
+  return submitErrors;
+};
+
+const findMismatchingPrices = async () => {
+  await executeProcedure('PopulateStylePriceCorrections');
+  const data = await getSQLServerData('StylePriceCorrections');
+  console.log(data);
+};
+
 const server = app.listen(6000, async () => {
   console.log('App is listening...');
   let errors = [];
@@ -32,16 +52,9 @@ const server = app.listen(6000, async () => {
   try {
     await andromedaAuthorization();
     await connectDb();
-    const lastRunTime = await getLastRunTime('StylePriceImportArchive');
-    const data = await getAndromedaDataByQuery(
-      'ECHO-StyleCostUpdates',
-      '2022-06-02 18:04:20.000'
-    );
-
-    await submitQuery('TRUNCATE TABLE StylePriceImport');
-    const submitErrors = await submitStylePrices(data);
-    errors.push(submitErrors);
-    await executeProcedure('StylePriceImportfromAndromeda');
+    const submitErrors = await getAndInsertStylePrices();
+    console.log(submitErrors);
+    await findMismatchingPrices();
   } catch (err) {
     errors.push({
       type,
