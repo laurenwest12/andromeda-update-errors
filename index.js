@@ -46,7 +46,7 @@ const findMismatchingPrices = async () => {
   return errors;
 };
 
-const server = app.listen(6000, async () => {
+const server = app.listen(6025, async () => {
   console.log('App is listening...');
   let errors = [];
 
