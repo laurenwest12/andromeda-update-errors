@@ -17,9 +17,10 @@ const { mapStylesToSQLFormat } = require('./mappings/price.js');
 
 const insertStylePrices = async (data) => {
   const errors = [];
+  const styles = data.filter(({id_developmentstyle}) => id_developmentstyle !== 21808)
   const insertErrors = await submitAllQueries(
     mapStylesToSQLFormat,
-    data,
+    styles,
     'StylePriceImport'
   );
   insertErrors.length && errors.push(insertErrors);
