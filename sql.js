@@ -8,6 +8,7 @@ const pool = new sql.ConnectionPool({
   database,
   trustServerCertificate: true,
   requestTimeout: 500000,
+  encrypt: false
 });
 
 const connectDb = async () => {

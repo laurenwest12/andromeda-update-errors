@@ -48,22 +48,27 @@ const findMismatchingPrices = async () => {
 };
 
 const server = app.listen(6025, async () => {
-  console.log('App is listening...');
+  console.log('Andromeda update errors');
   let errors = [];
 
   try {
     await andromedaAuthorization();
     await connectDb();
+    console.log('Connected')
     const submitErrors = await getAndInsertStylePrices();
+    console.log('Styles prices complete')
     errors.push(submitErrors);
 
     const updateErrors = await findMismatchingPrices();
+    console.log('Mismatch prices complete')
     errors.push(updateErrors);
   } catch (err) {
     errors.push({
       type,
       err: err?.message,
     });
+    await sendErrorReport(errors.flat(), type);
+    process.kill(process.pid, 'SIGTERM');
   }
 
   if (errors.flat().length) {
@@ -79,3 +84,16 @@ process.on('SIGTERM', () => {
     console.log('Process terminated');
   });
 });
+
+// Register an unhandled exception handler
+process.on('uncaughtException', async (err) => {
+  // Exit the application with an error code
+  process.exit(1);
+});
+
+// Register an unhandled exception handler
+process.on('unhandledRejection', async (err) => {
+  // Exit the application with an error code
+  process.exit(1);
+});
+
