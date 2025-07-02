@@ -1,9 +1,6 @@
-const express = require('express');
-const app = express();
-
-const { type } = require('./config.js');
+// process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 const { andromedaAuthorization } = require('./authorization.js');
-const { sendErrorReport } = require('./functions/errorReporting.js');
+const { sendErrorEmail } = require('./functions/errorReporting.js');
 const {
   connectDb,
   submitAllQueries,
@@ -87,17 +84,17 @@ const main = async () => {
       type,
       err: err?.message,
     });
-    await sendErrorReport(errors.flat(), type);
+    await sendErrorEmail(errors.flat());
   }
 
   // If there are any errors, send an error report
   if (errors.flat().length) {
     errors = errors.flat();
-    await sendErrorReport(errors.flat(), type);
+    await sendErrorEmail(errors.flat());
   }
 };
 
-main();
+main()
 
 // Register an unhandled exception handler
 process.on('uncaughtException', async (err) => {
